@@ -1,10 +1,12 @@
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-version: 2.1
+version: 2
+
+defaults: &defaults
+  docker:
+    - image: circleci/node:13.6
+
 jobs:
-  build:
-    docker:
-      - image: circleci/node:13.6
-    working_directory: ~/repo
+  prepare:
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
@@ -16,4 +18,52 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      - run: npm test
+      - persist_to_workspace:
+          root: .
+          paths:
+            - node_modules
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: npm run build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build
+  test:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: npm run test
+  deploy-github:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run: git config --global user.email "$GH_EMAIL" > /dev/null 2>&1
+      - run: git config --global user.name "$GH_NAME" > /dev/null 2>&1
+      - run: npm run deploy
+
+workflows:
+  version: 2
+  branch:
+    jobs:
+      - prepare
+      - build:
+          requires:
+            - prepare
+      - test:
+          requires:
+            - build
+      - deploy-github:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
