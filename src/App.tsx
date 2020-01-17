@@ -59,7 +59,7 @@ export class App extends React.Component<{}, AppState> {
           <Form.Row className="ml-3">
             <DropdownButton
               size="sm"
-              variant="secondary"
+              variant="outline"
               id="tripType"
               title={this.state.request.tripType}
               className="mr-1"
@@ -74,7 +74,7 @@ export class App extends React.Component<{}, AppState> {
             </DropdownButton>
             <DropdownButton
               size="sm"
-              variant="secondary"
+              variant="outline"
               id="passengers"
               title={
                 this.state.request.passengers === 1
@@ -87,7 +87,7 @@ export class App extends React.Component<{}, AppState> {
             </DropdownButton>
             <DropdownButton
               size="sm"
-              variant="secondary"
+              variant="outline"
               id="classType"
               title={this.state.request.classType}
             >
@@ -132,10 +132,16 @@ export class App extends React.Component<{}, AppState> {
               ></Form.Control>
             </Form.Group>
           </Form.Row>
+          <Row className="justify-content-md-center mt-3">
+            {" "}
+            <Button variant="primary" type="submit">
+              Search
+            </Button>
+          </Row>
           <Form.Row className="ml-3 mb-3">
             <DropdownButton
               size="sm"
-              variant="secondary"
+              variant="outline"
               id="stops"
               title="Stops"
               className="mr-1"
@@ -145,7 +151,7 @@ export class App extends React.Component<{}, AppState> {
             </DropdownButton>
             <DropdownButton
               size="sm"
-              variant="secondary"
+              variant="outline"
               className="mr-1"
               id="airline"
               title="Airline"
@@ -163,9 +169,6 @@ export class App extends React.Component<{}, AppState> {
               })}
             </DropdownButton>
           </Form.Row>
-          <Button variant="primary" type="submit">
-            Search
-          </Button>
         </Form>
       </div>
     );
