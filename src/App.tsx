@@ -22,11 +22,11 @@ export interface AppState {
 
 let tripTypes: string[] = [];
 for (var t in TripType) {
-  tripTypes.push(t);
+  tripTypes.push(TripType[t]);
 }
 let classTypes: string[] = [];
 for (var c in ClassType) {
-  classTypes.push(c);
+  classTypes.push(ClassType[c]);
 }
 
 export class App extends React.Component<{}, AppState> {
@@ -37,6 +37,22 @@ export class App extends React.Component<{}, AppState> {
       airlines: ["Lufthansa", "Emirates", "Russian airlines"]
     }
   };
+
+  changeRequest(attr: string, value: any) {
+    let temp: SearchRequest = this.state.request;
+    temp[attr] = value;
+    this.setState({ request: temp });
+  }
+
+  performSearch() {
+    console.log(this.state.request);
+  }
+
+  filterResult(attr: string, value: any) {
+    let temp: SearchResult = this.state.result;
+    temp[attr] = value;
+    this.setState({ result: temp });
+  }
 
   render() {
     return (
@@ -63,10 +79,13 @@ export class App extends React.Component<{}, AppState> {
               id="tripType"
               title={this.state.request.tripType}
               className="mr-1"
+              onSelect={(eventKey: any) => {
+                this.changeRequest("tripType", eventKey);
+              }}
             >
               {tripTypes.map(name => {
                 return (
-                  <Dropdown.Item key={tripTypes.indexOf(name)}>
+                  <Dropdown.Item key={tripTypes.indexOf(name)} eventKey={name}>
                     {name}
                   </Dropdown.Item>
                 );
@@ -83,17 +102,27 @@ export class App extends React.Component<{}, AppState> {
               }
               className="mr-1"
             >
-              <Form.Control type="number" min="1" defaultValue="1" />
+              <Form.Control
+                type="number"
+                min="1"
+                defaultValue="1"
+                onChange={(event: any) => {
+                  this.changeRequest("passengers", event.target.value);
+                }}
+              />
             </DropdownButton>
             <DropdownButton
               size="sm"
               variant="outline"
               id="classType"
               title={this.state.request.classType}
+              onSelect={(eventKey: any) => {
+                this.changeRequest("classType", eventKey);
+              }}
             >
               {classTypes.map(name => {
                 return (
-                  <Dropdown.Item key={classTypes.indexOf(name)}>
+                  <Dropdown.Item key={classTypes.indexOf(name)} eventKey={name}>
                     {name}
                   </Dropdown.Item>
                 );
@@ -102,7 +131,13 @@ export class App extends React.Component<{}, AppState> {
           </Form.Row>
           <Form.Row className="mt-3 ml-3 mr-3">
             <Form.Group as={Col} controlId="source" className="mr-3">
-              <Form.Control min="0" placeholder="Source" />
+              <Form.Control
+                min="0"
+                placeholder="Source"
+                onChange={(event: any) => {
+                  this.changeRequest("source", event.target.value);
+                }}
+              />
             </Form.Group>
             <Form.Group as={Col} controlId="distance" className="mr-3" lg="1">
               <InputGroup>
@@ -110,6 +145,9 @@ export class App extends React.Component<{}, AppState> {
                   type="number"
                   min="0"
                   defaultValue={this.state.request.radius}
+                  onChange={(event: any) => {
+                    this.changeRequest("radius", event.target.value);
+                  }}
                 />
                 <InputGroup.Append>
                   <InputGroup.Text id="km-addon">km</InputGroup.Text>
@@ -117,24 +155,43 @@ export class App extends React.Component<{}, AppState> {
               </InputGroup>
             </Form.Group>
             <Form.Group as={Col} controlId="target" className="mr-3">
-              <Form.Control min="0" placeholder="Target airport" />
+              <Form.Control
+                min="0"
+                placeholder="Target airport"
+                onChange={(event: any) => {
+                  this.changeRequest("target", event.target.value);
+                }}
+              />
             </Form.Group>
             <Form.Group as={Col} controlId="startDate" className="mr-3" lg="2">
               <Form.Control
                 type="date"
-                defaultValue={this.state.request.departure.toDateString()}
+                defaultValue={
+                  this.state.request.departure
+                    ? this.state.request.departure.toDateString()
+                    : undefined
+                }
+                onChange={(event: any) => {
+                  this.changeRequest("startDate", event.target.value);
+                }}
               ></Form.Control>
             </Form.Group>
             <Form.Group as={Col} controlId="endDate" lg="2">
               <Form.Control
                 type="date"
-                defaultValue={this.state.request.arrival.toDateString()}
+                defaultValue={
+                  this.state.request.arrival
+                    ? this.state.request.arrival.toDateString()
+                    : undefined
+                }
+                onChange={(event: any) => {
+                  this.changeRequest("endDate", event.target.value);
+                }}
               ></Form.Control>
             </Form.Group>
           </Form.Row>
           <Row className="justify-content-md-center mt-3">
-            {" "}
-            <Button variant="primary" type="submit">
+            <Button variant="primary" onClick={() => this.performSearch()}>
               Search
             </Button>
           </Row>
@@ -147,7 +204,15 @@ export class App extends React.Component<{}, AppState> {
               className="mr-1"
             >
               <Form.Label className="m-1">Maximum stops</Form.Label>
-              <Form.Control size="sm" type="number" min="0" defaultValue="0" />
+              <Form.Control
+                size="sm"
+                type="number"
+                min="0"
+                defaultValue="0"
+                onChange={(event: any) => {
+                  this.filterResult("stops", event.target.value);
+                }}
+              />
             </DropdownButton>
             <DropdownButton
               size="sm"
@@ -161,7 +226,7 @@ export class App extends React.Component<{}, AppState> {
                   <Form.Check
                     className="m-2"
                     type="checkbox"
-                    key={this.state.result.airlines.indexOf(name)}
+                    key={name}
                     label={name}
                     defaultChecked={true}
                   />
