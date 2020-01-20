@@ -8,16 +8,21 @@ import {
   Button,
   DropdownButton,
   Dropdown,
-  InputGroup
+  InputGroup,
+  ProgressBar
 } from "react-bootstrap";
 import { SearchRequest } from "./objects/SearchRequest";
 import { TripType } from "./objects/TripType";
 import { ClassType } from "./objects/ClassType";
-import { SearchResult } from "./objects/SearchResult";
+import { Trip } from "./objects/Trip";
+import moment from "moment";
+import axios from "axios";
+import { ResultTable } from "./components/ResultTable";
 
 export interface AppState {
   request: SearchRequest;
-  result: SearchResult;
+  searching: Boolean;
+  trips?: Trip[];
 }
 
 let tripTypes: string[] = [];
@@ -32,10 +37,7 @@ for (var c in ClassType) {
 export class App extends React.Component<{}, AppState> {
   state: Readonly<AppState> = {
     request: new SearchRequest(),
-    result: {
-      // mock data
-      airlines: ["Lufthansa", "Emirates", "Russian airlines"]
-    }
+    searching: false
   };
 
   changeRequest(attr: string, value: any) {
@@ -45,13 +47,73 @@ export class App extends React.Component<{}, AppState> {
   }
 
   performSearch() {
-    console.log(this.state.request);
+    this.setState({ searching: true });
+    axios
+      .post(
+        "http://localhost:8080/featherkraken/rest/flights",
+        this.state.request
+      )
+      .then(result => {
+        this.setState({ trips: result.data });
+        this.setState({ searching: false });
+      })
+      .catch(error => {
+        console.error(error);
+        this.setState({ searching: false });
+      });
   }
 
   filterResult(attr: string, value: any) {
-    let temp: SearchResult = this.state.result;
-    temp[attr] = value;
-    this.setState({ result: temp });
+    if (!this.state.trips) {
+      return;
+    }
+  }
+
+  ResultFilters(props: any) {
+    if (props.result && props.result.length !== 0) {
+      return (
+        <Form.Row className="ml-3 mb-3">
+          <DropdownButton
+            variant="outline"
+            id="stops"
+            title="Stops"
+            className="mr-1"
+          >
+            <Form.Label className="m-1">Maximum stops</Form.Label>
+            <Form.Control
+              size="sm"
+              type="number"
+              min="0"
+              defaultValue="0"
+              onChange={(event: any) => {
+                this.filterResult("stops", event.target.value);
+              }}
+            />
+          </DropdownButton>
+          <DropdownButton
+            variant="outline"
+            className="mr-1"
+            id="airline"
+            title="Airline"
+          >
+            {props.result.airlines
+              ? props.result.airlines.map((name: string) => {
+                  return (
+                    <Form.Check
+                      className="m-2"
+                      type="checkbox"
+                      key={name}
+                      label={name}
+                      defaultChecked={true}
+                    />
+                  );
+                })
+              : ""}
+          </DropdownButton>
+        </Form.Row>
+      );
+    }
+    return <div></div>;
   }
 
   render() {
@@ -74,7 +136,6 @@ export class App extends React.Component<{}, AppState> {
         <Form className="m-5">
           <Form.Row className="ml-3">
             <DropdownButton
-              size="sm"
               variant="outline"
               id="tripType"
               title={this.state.request.tripType}
@@ -92,7 +153,6 @@ export class App extends React.Component<{}, AppState> {
               })}
             </DropdownButton>
             <DropdownButton
-              size="sm"
               variant="outline"
               id="passengers"
               title={
@@ -112,7 +172,6 @@ export class App extends React.Component<{}, AppState> {
               />
             </DropdownButton>
             <DropdownButton
-              size="sm"
               variant="outline"
               id="classType"
               title={this.state.request.classType}
@@ -163,29 +222,37 @@ export class App extends React.Component<{}, AppState> {
                 }}
               />
             </Form.Group>
-            <Form.Group as={Col} controlId="startDate" className="mr-3" lg="2">
+            <Form.Group as={Col} controlId="departure" className="mr-3" lg="2">
               <Form.Control
                 type="date"
                 defaultValue={
-                  this.state.request.departure
-                    ? this.state.request.departure.toDateString()
+                  this.state.request.departureTime
+                    ? this.state.request.departureTime.toDateString()
                     : undefined
                 }
                 onChange={(event: any) => {
-                  this.changeRequest("startDate", event.target.value);
+                  const date: Date = new Date(event.target.value);
+                  this.changeRequest(
+                    "departure",
+                    moment(date).format("DD.MM.YYYY")
+                  );
                 }}
               ></Form.Control>
             </Form.Group>
-            <Form.Group as={Col} controlId="endDate" lg="2">
+            <Form.Group as={Col} controlId="return" lg="2">
               <Form.Control
                 type="date"
                 defaultValue={
-                  this.state.request.arrival
-                    ? this.state.request.arrival.toDateString()
+                  this.state.request.returnTime
+                    ? this.state.request.returnTime.toDateString()
                     : undefined
                 }
                 onChange={(event: any) => {
-                  this.changeRequest("endDate", event.target.value);
+                  const date: Date = new Date(event.target.value);
+                  this.changeRequest(
+                    "return",
+                    moment(date).format("DD.MM.YYYY")
+                  );
                 }}
               ></Form.Control>
             </Form.Group>
@@ -195,46 +262,14 @@ export class App extends React.Component<{}, AppState> {
               Search
             </Button>
           </Row>
-          <Form.Row className="ml-3 mb-3">
-            <DropdownButton
-              size="sm"
-              variant="outline"
-              id="stops"
-              title="Stops"
-              className="mr-1"
-            >
-              <Form.Label className="m-1">Maximum stops</Form.Label>
-              <Form.Control
-                size="sm"
-                type="number"
-                min="0"
-                defaultValue="0"
-                onChange={(event: any) => {
-                  this.filterResult("stops", event.target.value);
-                }}
-              />
-            </DropdownButton>
-            <DropdownButton
-              size="sm"
-              variant="outline"
-              className="mr-1"
-              id="airline"
-              title="Airline"
-            >
-              {this.state.result.airlines.map(name => {
-                return (
-                  <Form.Check
-                    className="m-2"
-                    type="checkbox"
-                    key={name}
-                    label={name}
-                    defaultChecked={true}
-                  />
-                );
-              })}
-            </DropdownButton>
-          </Form.Row>
+          {this.state.searching ? (
+            <ProgressBar className="m-3" animated now={100} />
+          ) : (
+            ""
+          )}
+          <this.ResultFilters result={this.state.trips} />
         </Form>
+        <ResultTable trips={this.state.trips} />
       </div>
     );
   }
