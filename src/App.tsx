@@ -15,14 +15,22 @@ import { SearchRequest } from "./objects/SearchRequest";
 import { TripType } from "./objects/TripType";
 import { ClassType } from "./objects/ClassType";
 import { Trip } from "./objects/Trip";
+import { Airport } from "./objects/Airport";
 import moment from "moment";
 import axios from "axios";
 import { ResultTable } from "./components/ResultTable";
+import { AsyncTypeahead, Menu, MenuItem } from "react-bootstrap-typeahead";
+
+const apiUrl: string = "http://localhost:8080/featherkraken/rest";
 
 export interface AppState {
   request: SearchRequest;
-  searching: Boolean;
+  searching: boolean;
   trips?: Trip[];
+  allowNew: boolean;
+  isLoading: boolean;
+  multiple: boolean;
+  options: Airport[];
 }
 
 let tripTypes: string[] = [];
@@ -37,7 +45,11 @@ for (var c in ClassType) {
 export class App extends React.Component<{}, AppState> {
   state: Readonly<AppState> = {
     request: new SearchRequest(),
-    searching: false
+    searching: false,
+    allowNew: false,
+    isLoading: false,
+    multiple: false,
+    options: []
   };
 
   changeRequest(attr: string, value: any) {
@@ -49,10 +61,7 @@ export class App extends React.Component<{}, AppState> {
   performSearch() {
     this.setState({ searching: true });
     axios
-      .post(
-        "http://localhost:8080/featherkraken/rest/flights",
-        this.state.request
-      )
+      .post(`${apiUrl}/flights`, this.state.request)
       .then(result => {
         this.setState({ trips: result.data });
         this.setState({ searching: false });
@@ -67,6 +76,17 @@ export class App extends React.Component<{}, AppState> {
     if (!this.state.trips) {
       return;
     }
+  }
+
+  getAirports(value: string) {
+    axios
+      .get(`${apiUrl}/airports?query=${value}`)
+      .then(result => {
+        this.setState({ options: result.data });
+      })
+      .catch(error => {
+        console.error(error);
+      });
   }
 
   ResultFilters(props: any) {
@@ -97,12 +117,12 @@ export class App extends React.Component<{}, AppState> {
             title="Airline"
           >
             {props.result.airlines
-              ? props.result.airlines.map((name: string) => {
+              ? props.result.airlines.map((name: string, index: number) => {
                   return (
                     <Form.Check
                       className="m-2"
                       type="checkbox"
-                      key={name}
+                      key={index}
                       label={name}
                       defaultChecked={true}
                     />
@@ -190,12 +210,27 @@ export class App extends React.Component<{}, AppState> {
           </Form.Row>
           <Form.Row className="mt-3 ml-3 mr-3">
             <Form.Group as={Col} controlId="source" className="mr-3">
-              <Form.Control
-                min="0"
+              <AsyncTypeahead
+                {...this.state}
+                id="source"
+                labelKey={(airport: Airport) =>
+                  `${airport.displayName} ${airport.name}`
+                }
                 placeholder="Source"
-                onChange={(event: any) => {
-                  this.changeRequest("source", event.target.value);
+                minLength={2}
+                onSearch={(query: string) => this.getAirports(query)}
+                onChange={(airport: Airport[]) => {
+                  this.changeRequest("source", airport[0].name);
                 }}
+                renderMenu={(airports, menuProps) => (
+                  <Menu {...menuProps}>
+                    {airports.map((airport, index) => (
+                      <MenuItem option={airport} position={index} key={index}>
+                        {airport.displayName} {airport.name}
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                )}
               />
             </Form.Group>
             <Form.Group as={Col} controlId="distance" className="mr-3" lg="1">
@@ -214,12 +249,27 @@ export class App extends React.Component<{}, AppState> {
               </InputGroup>
             </Form.Group>
             <Form.Group as={Col} controlId="target" className="mr-3">
-              <Form.Control
-                min="0"
-                placeholder="Target airport"
-                onChange={(event: any) => {
-                  this.changeRequest("target", event.target.value);
+              <AsyncTypeahead
+                {...this.state}
+                id="target"
+                labelKey={(airport: Airport) =>
+                  `${airport.displayName} ${airport.name}`
+                }
+                placeholder="Target location"
+                minLength={2}
+                onSearch={(query: string) => this.getAirports(query)}
+                onChange={(airport: Airport[]) => {
+                  this.changeRequest("target", airport[0].name);
                 }}
+                renderMenu={(airports, menuProps) => (
+                  <Menu {...menuProps}>
+                    {airports.map((airport, index) => (
+                      <MenuItem option={airport} position={index} key={index}>
+                        {airport.displayName} {airport.name}
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                )}
               />
             </Form.Group>
             <Form.Group as={Col} controlId="departure" className="mr-3" lg="2">

@@ -7,9 +7,9 @@ export function ResultTable(props: any) {
   if (props.trips) {
     return (
       <div>
-        {props.trips.map((trip: Trip) => {
+        {props.trips.map((trip: Trip, index: number) => {
           return (
-            <Container className="mb-3 border-bottom">
+            <Container className="mb-3 border-bottom" key={index}>
               <Row>
                 <Col>
                   <div className="mb-2">
