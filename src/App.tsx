@@ -219,8 +219,8 @@ export class App extends React.Component<{}, AppState> {
                 placeholder="Source"
                 minLength={2}
                 onSearch={(query: string) => this.getAirports(query)}
-                onChange={(airport: Airport[]) => {
-                  this.changeRequest("source", airport[0].name);
+                onChange={(airports: Airport[]) => {
+                  this.changeRequest("source", airports[0]);
                 }}
                 renderMenu={(airports, menuProps) => (
                   <Menu {...menuProps}>
@@ -258,8 +258,8 @@ export class App extends React.Component<{}, AppState> {
                 placeholder="Target location"
                 minLength={2}
                 onSearch={(query: string) => this.getAirports(query)}
-                onChange={(airport: Airport[]) => {
-                  this.changeRequest("target", airport[0].name);
+                onChange={(airports: Airport[]) => {
+                  this.changeRequest("target", airports[0]);
                 }}
                 renderMenu={(airports, menuProps) => (
                   <Menu {...menuProps}>

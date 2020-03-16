@@ -1,5 +1,6 @@
 import { TripType } from "./TripType";
 import { ClassType } from "./ClassType";
+import { Airport } from "./Airport";
 
 export class SearchRequest {
   public limit?: number = 10;
@@ -8,9 +9,9 @@ export class SearchRequest {
   public classType?: ClassType = ClassType.Economy;
   public passengers?: number = 1;
 
-  public source?: string;
+  public source?: Airport;
   public radius?: number;
-  public target?: string;
+  public target?: Airport;
 
   public departureTime?: Date;
   public returnTime?: Date;
