@@ -144,7 +144,7 @@ export class App extends React.Component<{}, AppState> {
             <Row>
               <img
                 alt="Featherkraken"
-                src="/logo512.png"
+                src="./logo512.png"
                 width="50"
                 height="50"
                 className="d-inline-block align-top ml-3 mr-3"
