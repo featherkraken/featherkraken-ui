@@ -239,23 +239,27 @@ export class App extends React.Component<{}, AppState> {
                 }}
               ></Form.Control>
             </Form.Group>
-            <Form.Group as={Col} controlId="return" lg="2">
-              <Form.Control
-                type="date"
-                defaultValue={
-                  this.state.request.returnTime
-                    ? this.state.request.returnTime.toDateString()
-                    : undefined
-                }
-                onChange={(event: any) => {
-                  const date: Date = new Date(event.target.value);
-                  this.changeRequest(
-                    "return",
-                    moment(date).format("DD.MM.YYYY")
-                  );
-                }}
-              ></Form.Control>
-            </Form.Group>
+            {this.state.request.tripType === TripType.RoundTrip ? (
+              <Form.Group as={Col} controlId="return" lg="2">
+                <Form.Control
+                  type="date"
+                  defaultValue={
+                    this.state.request.returnTime
+                      ? this.state.request.returnTime.toDateString()
+                      : undefined
+                  }
+                  onChange={(event: any) => {
+                    const date: Date = new Date(event.target.value);
+                    this.changeRequest(
+                      "return",
+                      moment(date).format("DD.MM.YYYY")
+                    );
+                  }}
+                ></Form.Control>
+              </Form.Group>
+            ) : (
+              ""
+            )}
           </Form.Row>
           <Row className="justify-content-md-center mt-3">
             <Button variant="primary" onClick={() => this.performSearch()}>
