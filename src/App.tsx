@@ -72,12 +72,6 @@ export class App extends React.Component<{}, AppState> {
       });
   }
 
-  filterResult(attr: string, value: any) {
-    if (!this.state.trips) {
-      return;
-    }
-  }
-
   getAirports(value: string) {
     axios
       .get(`${apiUrl}/airports?query=${value}`)
@@ -87,53 +81,6 @@ export class App extends React.Component<{}, AppState> {
       .catch(error => {
         console.error(error);
       });
-  }
-
-  ResultFilters(props: any) {
-    if (props.result && props.result.length !== 0) {
-      return (
-        <Form.Row className="ml-3 mb-3">
-          <DropdownButton
-            variant="outline"
-            id="stops"
-            title="Stops"
-            className="mr-1"
-          >
-            <Form.Label className="m-1">Maximum stops</Form.Label>
-            <Form.Control
-              size="sm"
-              type="number"
-              min="0"
-              defaultValue="0"
-              onChange={(event: any) => {
-                this.filterResult("stops", event.target.value);
-              }}
-            />
-          </DropdownButton>
-          <DropdownButton
-            variant="outline"
-            className="mr-1"
-            id="airline"
-            title="Airline"
-          >
-            {props.result.airlines
-              ? props.result.airlines.map((name: string, index: number) => {
-                  return (
-                    <Form.Check
-                      className="m-2"
-                      type="checkbox"
-                      key={index}
-                      label={name}
-                      defaultChecked={true}
-                    />
-                  );
-                })
-              : ""}
-          </DropdownButton>
-        </Form.Row>
-      );
-    }
-    return <div></div>;
   }
 
   render() {
@@ -321,7 +268,6 @@ export class App extends React.Component<{}, AppState> {
           ) : (
             ""
           )}
-          <this.ResultFilters result={this.state.trips} />
         </Form>
         <ResultTable trips={this.state.trips} />
       </div>
