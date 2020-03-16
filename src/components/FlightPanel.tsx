@@ -14,9 +14,9 @@ export function FlightPanel(props: any) {
     return (
       <div>
         {flight.route
-          ? flight.route.map((route: Route) => {
+          ? flight.route.map((route: Route, index: number) => {
               return (
-                <Container>
+                <Container key={index}>
                   <Row className="mb-1">
                     <div>
                       <big>
