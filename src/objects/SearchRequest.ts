@@ -18,4 +18,6 @@ export class SearchRequest {
   // Dates as string
   public departure?: string;
   public return?: string;
+
+  public stops?: number;
 }

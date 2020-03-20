@@ -83,6 +83,28 @@ export class App extends React.Component<{}, AppState> {
       });
   }
 
+  getPassengerTitle(): string {
+    if (!this.state.request.passengers) {
+      return "Passengers";
+    }
+    const passengers: number = +this.state.request.passengers;
+    return `${passengers} Passenger${passengers === 1 ? "" : "s"}`;
+  }
+
+  getStopTitle(): string {
+    if (!this.state.request.stops) {
+      return "Filter stops";
+    }
+    const stops: number = +this.state.request.stops;
+    if (stops === 0) {
+      return "Non-stop";
+    }
+    if (stops === 1) {
+      return "1 Stop";
+    }
+    return `${stops} Stops`;
+  }
+
   render() {
     return (
       <div>
@@ -122,11 +144,7 @@ export class App extends React.Component<{}, AppState> {
             <DropdownButton
               variant="outline"
               id="passengers"
-              title={
-                this.state.request.passengers === 1
-                  ? this.state.request.passengers + " Passenger"
-                  : this.state.request.passengers + " Passengers"
-              }
+              title={this.getPassengerTitle()}
               className="mr-1"
             >
               <Form.Control
@@ -153,6 +171,21 @@ export class App extends React.Component<{}, AppState> {
                   </Dropdown.Item>
                 );
               })}
+            </DropdownButton>
+            <DropdownButton
+              variant="outline"
+              id="stops"
+              title={this.getStopTitle()}
+              className="mr-1"
+            >
+              <Form.Control
+                type="number"
+                min="0"
+                defaultValue="0"
+                onChange={(event: any) => {
+                  this.changeRequest("stops", event.target.value);
+                }}
+              />
             </DropdownButton>
           </Form.Row>
           <Form.Row className="mt-3 ml-3 mr-3">
