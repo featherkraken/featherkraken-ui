@@ -30,12 +30,12 @@ export function FlightPanel(props: any) {
                         : ""}
                     </div>
                   </Row>
-                  <Row>
+                  <Row className="mb-3">
                     <Col sm={1}>
                       <Airplane />
                     </Col>
-                    <Col>
-                      <div className="mb-3 p-2 border rounded">
+                    <Col className="border rounded">
+                      <div className="p-2">
                         <div>
                           <strong
                             title={moment(route.departure).format("ddd D MMM")}
@@ -57,6 +57,12 @@ export function FlightPanel(props: any) {
                           {route.target?.displayName} {route.target?.name}
                         </div>
                       </div>
+                    </Col>
+                    <Col sm={3}>
+                      <img
+                        alt={`Airline ${route.airline}`}
+                        src={`https://images.kiwi.com/airlines/64/${route.airline}.png`}
+                      />
                     </Col>
                   </Row>
                 </Container>
