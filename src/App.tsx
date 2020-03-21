@@ -81,7 +81,6 @@ export class App extends React.Component<{}, AppState> {
   }
 
   performSearch() {
-    console.log(this.state.request);
     this.setState({ searching: true });
     axios
       .post(`${apiUrl}/flights`, this.state.request)
@@ -150,7 +149,7 @@ export class App extends React.Component<{}, AppState> {
           </Navbar.Brand>
         </Navbar>
         <Form className="m-5">
-          <Form.Row className="ml-3">
+          <Row className="ml-3">
             <DropdownButton
               variant="outline"
               id="tripType"
@@ -214,8 +213,25 @@ export class App extends React.Component<{}, AppState> {
                 }}
               />
             </DropdownButton>
-          </Form.Row>
-          <Form.Row className="mt-3 ml-3 mr-3">
+            <DropdownButton
+              variant="outline"
+              id="stops"
+              title={`${this.state.request.limit} Results`}
+              className="mr-1"
+            >
+              <Form.Control
+                type="number"
+                min="0"
+                max="1000"
+                step={25}
+                defaultValue={this.state.request.limit}
+                onChange={(event: any) => {
+                  this.changeRequest("limit", event.target.value);
+                }}
+              />
+            </DropdownButton>
+          </Row>
+          <Row className="mt-3 ml-3 mr-3">
             <Form.Group as={Col} controlId="source" className="mr-3">
               <AsyncTypeahead
                 {...this.state}
@@ -417,7 +433,7 @@ export class App extends React.Component<{}, AppState> {
             ) : (
               ""
             )}
-          </Form.Row>
+          </Row>
           <Row className="justify-content-md-center mt-3">
             <Button variant="primary" onClick={() => this.performSearch()}>
               Search
