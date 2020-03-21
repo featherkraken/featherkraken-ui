@@ -1,4 +1,6 @@
 import * as React from "react";
+import "react-dates/lib/css/_datepicker.css";
+import "react-dates/initialize";
 import "./App.css";
 import {
   Navbar,
@@ -9,17 +11,25 @@ import {
   DropdownButton,
   Dropdown,
   InputGroup,
-  ProgressBar
+  ProgressBar,
+  ToggleButton,
+  ToggleButtonGroup
 } from "react-bootstrap";
 import { SearchRequest } from "./objects/SearchRequest";
 import { TripType } from "./objects/TripType";
 import { ClassType } from "./objects/ClassType";
 import { Trip } from "./objects/Trip";
 import { Airport } from "./objects/Airport";
+import { Timespan } from "./objects/Timespan";
 import moment from "moment";
 import axios from "axios";
 import { ResultTable } from "./components/ResultTable";
 import { AsyncTypeahead, Menu, MenuItem } from "react-bootstrap-typeahead";
+import { DateRangePicker, SingleDatePicker } from "react-dates";
+import {
+  FaCalendar as Calendar,
+  FaCalendarWeek as CalendarSpan
+} from "react-icons/fa";
 
 const apiUrl: string = "http://localhost:8080/featherkraken/rest";
 
@@ -31,6 +41,12 @@ export interface AppState {
   isLoading: boolean;
   multiple: boolean;
   options: Airport[];
+  departureFlexible: boolean;
+  departureFocused: boolean | null;
+  departureSpanFocused: "startDate" | "endDate" | null;
+  returnFlexible: boolean;
+  returnFocused: boolean | null;
+  returnSpanFocused: "startDate" | "endDate" | null;
 }
 
 let tripTypes: string[] = [];
@@ -49,7 +65,13 @@ export class App extends React.Component<{}, AppState> {
     allowNew: false,
     isLoading: false,
     multiple: false,
-    options: []
+    options: [],
+    departureFlexible: false,
+    departureFocused: false,
+    departureSpanFocused: null,
+    returnFlexible: false,
+    returnFocused: false,
+    returnSpanFocused: null
   };
 
   changeRequest(attr: string, value: any) {
@@ -59,6 +81,7 @@ export class App extends React.Component<{}, AppState> {
   }
 
   performSearch() {
+    console.log(this.state.request);
     this.setState({ searching: true });
     axios
       .post(`${apiUrl}/flights`, this.state.request)
@@ -103,6 +126,10 @@ export class App extends React.Component<{}, AppState> {
       return "1 Stop";
     }
     return `${stops} Stops`;
+  }
+
+  dateToMoment(date: string | undefined): moment.Moment {
+    return date ? moment(date, "DD.MM.YYYY") : moment(new Date());
   }
 
   render() {
@@ -252,40 +279,140 @@ export class App extends React.Component<{}, AppState> {
                 )}
               />
             </Form.Group>
-            <Form.Group as={Col} controlId="departure" className="mr-3" lg="2">
-              <Form.Control
-                type="date"
-                defaultValue={
-                  this.state.request.departureTime
-                    ? this.state.request.departureTime.toDateString()
-                    : undefined
-                }
+            <Form.Group
+              as={Col}
+              controlId="departure"
+              className="mr-3 border rounded"
+              lg="2"
+            >
+              <ToggleButtonGroup
+                type="checkbox"
                 onChange={(event: any) => {
-                  const date: Date = new Date(event.target.value);
-                  this.changeRequest(
-                    "departure",
-                    moment(date).format("DD.MM.YYYY")
-                  );
+                  this.setState({
+                    departureFlexible: event.indexOf("departureFlexible") > -1
+                  });
                 }}
-              ></Form.Control>
+              >
+                <ToggleButton
+                  variant="light"
+                  type="checkbox"
+                  value="departureFlexible"
+                >
+                  {this.state.departureFlexible ? (
+                    <Calendar title="Exact date" />
+                  ) : (
+                    <CalendarSpan title="Flexible date" />
+                  )}
+                </ToggleButton>
+              </ToggleButtonGroup>
+              {this.state.departureFlexible ? (
+                <DateRangePicker
+                  startDate={this.dateToMoment(
+                    this.state.request?.departure?.from
+                  )}
+                  startDateId="departureFrom"
+                  endDate={this.dateToMoment(this.state.request?.departure?.to)}
+                  endDateId="departureTo"
+                  onDatesChange={({ startDate, endDate }) => {
+                    const departure: Timespan = {
+                      from: startDate?.format("DD.MM.YYYY"),
+                      to: endDate?.format("DD.MM.YYYY")
+                    };
+                    this.changeRequest("departure", departure);
+                  }}
+                  focusedInput={this.state.departureSpanFocused}
+                  onFocusChange={focused =>
+                    this.setState({ departureSpanFocused: focused })
+                  }
+                  displayFormat="DD.MM.YYYY"
+                  noBorder={true}
+                ></DateRangePicker>
+              ) : (
+                <SingleDatePicker
+                  id="departure"
+                  date={this.dateToMoment(this.state.request?.departure?.from)}
+                  focused={this.state.departureFocused}
+                  onFocusChange={focused =>
+                    this.setState({ departureFocused: focused.focused })
+                  }
+                  onDateChange={date => {
+                    const departure: Timespan = {
+                      from: date?.format("DD.MM.YYYY")
+                    };
+                    this.changeRequest("departure", departure);
+                  }}
+                  displayFormat="DD.MM.YYYY"
+                  noBorder={true}
+                ></SingleDatePicker>
+              )}
             </Form.Group>
             {this.state.request.tripType === TripType.RoundTrip ? (
-              <Form.Group as={Col} controlId="return" lg="2">
-                <Form.Control
-                  type="date"
-                  defaultValue={
-                    this.state.request.returnTime
-                      ? this.state.request.returnTime.toDateString()
-                      : undefined
-                  }
+              <Form.Group
+                as={Col}
+                controlId="return"
+                lg="2"
+                className="mr-3 border rounded"
+              >
+                <ToggleButtonGroup
+                  type="checkbox"
                   onChange={(event: any) => {
-                    const date: Date = new Date(event.target.value);
-                    this.changeRequest(
-                      "return",
-                      moment(date).format("DD.MM.YYYY")
-                    );
+                    this.setState({
+                      returnFlexible: event.indexOf("returnFlexible") > -1
+                    });
                   }}
-                ></Form.Control>
+                >
+                  <ToggleButton
+                    variant="light"
+                    type="checkbox"
+                    value="returnFlexible"
+                  >
+                    {this.state.returnFlexible ? (
+                      <Calendar title="Exact date" />
+                    ) : (
+                      <CalendarSpan title="Flexible date" />
+                    )}
+                  </ToggleButton>
+                </ToggleButtonGroup>
+                {this.state.returnFlexible ? (
+                  <DateRangePicker
+                    startDate={this.dateToMoment(
+                      this.state.request?.return?.from
+                    )}
+                    startDateId="returnFrom"
+                    endDate={this.dateToMoment(this.state.request?.return?.to)}
+                    endDateId="returnTo"
+                    onDatesChange={({ startDate, endDate }) => {
+                      const returnTime: Timespan = {
+                        from: startDate?.format("DD.MM.YYYY"),
+                        to: endDate?.format("DD.MM.YYYY")
+                      };
+                      this.changeRequest("return", returnTime);
+                    }}
+                    focusedInput={this.state.returnSpanFocused}
+                    onFocusChange={focused =>
+                      this.setState({ returnSpanFocused: focused })
+                    }
+                    displayFormat="DD.MM.YYYY"
+                    noBorder={true}
+                  ></DateRangePicker>
+                ) : (
+                  <SingleDatePicker
+                    id="return"
+                    date={this.dateToMoment(this.state.request?.return?.from)}
+                    focused={this.state.returnFocused}
+                    onFocusChange={focused =>
+                      this.setState({ returnFocused: focused.focused })
+                    }
+                    onDateChange={date => {
+                      const returnTime: Timespan = {
+                        from: date?.format("DD.MM.YYYY")
+                      };
+                      this.changeRequest("return", returnTime);
+                    }}
+                    displayFormat="DD.MM.YYYY"
+                    noBorder={true}
+                  ></SingleDatePicker>
+                )}
               </Form.Group>
             ) : (
               ""

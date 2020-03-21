@@ -1,3 +1,26 @@
 .navbar {
   background-color: #4582ec !important;
 }
+
+/* react-dates overrides */
+.CalendarDay__selected_span {
+  background: #57abf6;
+  color: white;
+  border: 1px solid lightgrey;
+}
+
+.CalendarDay__selected {
+  background: #4582ec;
+  color: white;
+}
+
+.CalendarDay__selected:hover,
+.CalendarDay__selected_span:hover {
+  background: #0ac1a5;
+  color: white;
+  border: 1px solid lightgrey;
+}
+
+.DateInput_input__focused {
+  border-bottom: 2px solid #4582ec;
+}
