@@ -1,6 +1,7 @@
 import { TripType } from "./TripType";
 import { ClassType } from "./ClassType";
 import { Airport } from "./Airport";
+import { Timespan } from "./Timespan";
 
 export class SearchRequest {
   public limit?: number = 10;
@@ -13,11 +14,8 @@ export class SearchRequest {
   public radius?: number;
   public target?: Airport;
 
-  public departureTime?: Date;
-  public returnTime?: Date;
-  // Dates as string
-  public departure?: string;
-  public return?: string;
+  public departure?: Timespan;
+  public return?: Timespan;
 
   public stops?: number;
 }
