@@ -34,7 +34,7 @@
 		"test": "react-scripts test",
 		"dev": "BROWSER=none npm start",
 		"predeploy": "npm run build",
-		"deploy": "gh-pages -d build"
+		"deploy": "gh-pages --repo \"https://github.com/featherkraken/featherkraken-ui.git\" -d build"
 	},
 	"eslintConfig": {
 		"extends": "react-app"
