@@ -232,7 +232,7 @@ export class App extends React.Component<{}, AppState> {
             </DropdownButton>
           </Row>
           <Row className="mt-3 ml-3 mr-3">
-            <Form.Group as={Col} controlId="source" className="mr-3">
+            <Form.Group as={Col} controlId="source">
               <AsyncTypeahead
                 {...this.state}
                 id="source"
@@ -256,11 +256,12 @@ export class App extends React.Component<{}, AppState> {
                 )}
               />
             </Form.Group>
-            <Form.Group as={Col} controlId="distance" className="mr-3" lg="1">
+            <Form.Group as={Col} controlId="distance" lg="2">
               <InputGroup>
                 <Form.Control
                   type="number"
                   min="0"
+                  step={100}
                   defaultValue={this.state.request.radius}
                   onChange={(event: any) => {
                     this.changeRequest("radius", event.target.value);
@@ -271,7 +272,7 @@ export class App extends React.Component<{}, AppState> {
                 </InputGroup.Append>
               </InputGroup>
             </Form.Group>
-            <Form.Group as={Col} controlId="target" className="mr-3">
+            <Form.Group as={Col} controlId="target">
               <AsyncTypeahead
                 {...this.state}
                 id="target"
@@ -444,14 +445,15 @@ export class App extends React.Component<{}, AppState> {
           ) : (
             ""
           )}
-          {this.state.result ? (
+          {this.state.result?.sourceAirports &&
+          this.state.result.sourceAirports.length > 1 ? (
             <DropdownButton
               variant="outline"
               id="sourceAirports"
               title="Found airports"
               className="ml-3"
             >
-              {this.state.result?.sourceAirports?.map((airport, index) => {
+              {this.state.result.sourceAirports?.map((airport, index) => {
                 return (
                   <Dropdown.Item eventKey={airport.name} key={index}>
                     {airport.displayName} {airport.name}
