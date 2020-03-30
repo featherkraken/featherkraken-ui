@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/featherkraken-ui/static/css/main.08aca1d7.chunk.css",
-    "main.js": "/featherkraken-ui/static/js/main.269c5d98.chunk.js",
-    "main.js.map": "/featherkraken-ui/static/js/main.269c5d98.chunk.js.map",
+    "main.js": "/featherkraken-ui/static/js/main.3e92585d.chunk.js",
+    "main.js.map": "/featherkraken-ui/static/js/main.3e92585d.chunk.js.map",
     "runtime-main.js": "/featherkraken-ui/static/js/runtime-main.bd2c698b.js",
     "runtime-main.js.map": "/featherkraken-ui/static/js/runtime-main.bd2c698b.js.map",
     "static/css/2.661b9127.chunk.css": "/featherkraken-ui/static/css/2.661b9127.chunk.css",
     "static/js/2.e9ad17b3.chunk.js": "/featherkraken-ui/static/js/2.e9ad17b3.chunk.js",
     "static/js/2.e9ad17b3.chunk.js.map": "/featherkraken-ui/static/js/2.e9ad17b3.chunk.js.map",
     "index.html": "/featherkraken-ui/index.html",
-    "precache-manifest.8c61cceb5afef216bd71475adf6af3e9.js": "/featherkraken-ui/precache-manifest.8c61cceb5afef216bd71475adf6af3e9.js",
+    "precache-manifest.5b7cbc07a8c9a5718331814bc5c14dc5.js": "/featherkraken-ui/precache-manifest.5b7cbc07a8c9a5718331814bc5c14dc5.js",
     "service-worker.js": "/featherkraken-ui/service-worker.js",
     "static/css/2.661b9127.chunk.css.map": "/featherkraken-ui/static/css/2.661b9127.chunk.css.map",
     "static/css/main.08aca1d7.chunk.css.map": "/featherkraken-ui/static/css/main.08aca1d7.chunk.css.map",
@@ -20,6 +20,6 @@
     "static/css/2.661b9127.chunk.css",
     "static/js/2.e9ad17b3.chunk.js",
     "static/css/main.08aca1d7.chunk.css",
-    "static/js/main.269c5d98.chunk.js"
+    "static/js/main.3e92585d.chunk.js"
   ]
 }
