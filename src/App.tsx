@@ -18,9 +18,9 @@ import {
 import { SearchRequest } from "./objects/SearchRequest";
 import { TripType } from "./objects/TripType";
 import { ClassType } from "./objects/ClassType";
-import { Trip } from "./objects/Trip";
 import { Airport } from "./objects/Airport";
 import { Timespan } from "./objects/Timespan";
+import { SearchResult } from "./objects/SearchResult";
 import moment from "moment";
 import axios from "axios";
 import { ResultTable } from "./components/ResultTable";
@@ -36,7 +36,7 @@ const apiUrl: string = "http://localhost:8080/featherkraken/rest";
 export interface AppState {
   request: SearchRequest;
   searching: boolean;
-  trips?: Trip[];
+  result?: SearchResult;
   allowNew: boolean;
   isLoading: boolean;
   multiple: boolean;
@@ -85,7 +85,7 @@ export class App extends React.Component<{}, AppState> {
     axios
       .post(`${apiUrl}/flights`, this.state.request)
       .then(result => {
-        this.setState({ trips: result.data });
+        this.setState({ result: result.data });
         this.setState({ searching: false });
       })
       .catch(error => {
@@ -444,8 +444,26 @@ export class App extends React.Component<{}, AppState> {
           ) : (
             ""
           )}
+          {this.state.result ? (
+            <DropdownButton
+              variant="outline"
+              id="sourceAirports"
+              title="Found airports"
+              className="ml-3"
+            >
+              {this.state.result?.sourceAirports?.map((airport, index) => {
+                return (
+                  <Dropdown.Item eventKey={airport.name} key={index}>
+                    {airport.displayName} {airport.name}
+                  </Dropdown.Item>
+                );
+              })}
+            </DropdownButton>
+          ) : (
+            ""
+          )}
         </Form>
-        <ResultTable trips={this.state.trips} />
+        <ResultTable trips={this.state.result?.trips} />
       </div>
     );
   }
