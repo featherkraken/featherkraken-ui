@@ -54,7 +54,11 @@ workflows:
   version: 2
   branch:
     jobs:
-      - prepare
+      - prepare:
+          filters:
+            branches:
+              ignore:
+              - gh-pages
       - build:
           requires:
             - prepare
