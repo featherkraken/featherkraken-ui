@@ -1,35 +1,20 @@
-import * as React from "react";
-import "react-dates/lib/css/_datepicker.css";
-import "react-dates/initialize";
-import "./App.css";
-import {
-  Navbar,
-  Row,
-  Form,
-  Col,
-  Button,
-  DropdownButton,
-  Dropdown,
-  InputGroup,
-  ProgressBar,
-  ToggleButton,
-  ToggleButtonGroup
-} from "react-bootstrap";
-import { SearchRequest } from "./objects/SearchRequest";
-import { TripType } from "./objects/TripType";
-import { ClassType } from "./objects/ClassType";
-import { Airport } from "./objects/Airport";
-import { Timespan } from "./objects/Timespan";
-import { SearchResult } from "./objects/SearchResult";
-import moment from "moment";
 import axios from "axios";
-import { ResultTable } from "./components/ResultTable";
+import moment from "moment";
+import * as React from "react";
+import { Button, Col, Dropdown, DropdownButton, Form, InputGroup, Navbar, ProgressBar, Row, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
 import { AsyncTypeahead, Menu, MenuItem } from "react-bootstrap-typeahead";
 import { DateRangePicker, SingleDatePicker } from "react-dates";
-import {
-  FaCalendar as Calendar,
-  FaCalendarWeek as CalendarSpan
-} from "react-icons/fa";
+import "react-dates/initialize";
+import "react-dates/lib/css/_datepicker.css";
+import { FaCalendar as Calendar, FaCalendarWeek as CalendarSpan } from "react-icons/fa";
+import "./App.css";
+import { ResultTable } from "./components/ResultTable";
+import { Airport } from "./objects/Airport";
+import { ClassType } from "./objects/ClassType";
+import { SearchRequest } from "./objects/SearchRequest";
+import { SearchResult } from "./objects/SearchResult";
+import { Timespan } from "./objects/Timespan";
+import { TripType } from "./objects/TripType";
 
 const apiUrl: string = "http://localhost:8080/featherkraken/rest";
 
@@ -71,7 +56,7 @@ export class App extends React.Component<{}, AppState> {
     departureSpanFocused: null,
     returnFlexible: false,
     returnFocused: false,
-    returnSpanFocused: null
+    returnSpanFocused: null,
   };
 
   changeRequest(attr: string, value: any) {
@@ -84,11 +69,11 @@ export class App extends React.Component<{}, AppState> {
     this.setState({ searching: true });
     axios
       .post(`${apiUrl}/flights`, this.state.request)
-      .then(result => {
+      .then((result) => {
         this.setState({ result: result.data });
         this.setState({ searching: false });
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
         this.setState({ searching: false });
       });
@@ -97,10 +82,10 @@ export class App extends React.Component<{}, AppState> {
   getAirports(value: string) {
     axios
       .get(`${apiUrl}/airports?query=${value}`)
-      .then(result => {
+      .then((result) => {
         this.setState({ options: result.data });
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
       });
   }
@@ -131,6 +116,15 @@ export class App extends React.Component<{}, AppState> {
     return date ? moment(date, "DD.MM.YYYY") : moment(new Date());
   }
 
+  initReturnDate() {
+    const departure = this.dateToMoment(this.state.request.departure?.from);
+    let returnDate = this.dateToMoment(this.state.request.return?.from);
+
+    if (departure.isAfter(returnDate)) {
+      this.changeRequest("return", this.state.request.departure);
+    }
+  }
+
   render() {
     return (
       <div>
@@ -159,7 +153,7 @@ export class App extends React.Component<{}, AppState> {
                 this.changeRequest("tripType", eventKey);
               }}
             >
-              {tripTypes.map(name => {
+              {tripTypes.map((name) => {
                 return (
                   <Dropdown.Item key={tripTypes.indexOf(name)} eventKey={name}>
                     {name}
@@ -190,7 +184,7 @@ export class App extends React.Component<{}, AppState> {
                 this.changeRequest("classType", eventKey);
               }}
             >
-              {classTypes.map(name => {
+              {classTypes.map((name) => {
                 return (
                   <Dropdown.Item key={classTypes.indexOf(name)} eventKey={name}>
                     {name}
@@ -306,7 +300,7 @@ export class App extends React.Component<{}, AppState> {
                 type="checkbox"
                 onChange={(event: any) => {
                   this.setState({
-                    departureFlexible: event.indexOf("departureFlexible") > -1
+                    departureFlexible: event.indexOf("departureFlexible") > -1,
                   });
                 }}
               >
@@ -333,12 +327,12 @@ export class App extends React.Component<{}, AppState> {
                   onDatesChange={({ startDate, endDate }) => {
                     const departure: Timespan = {
                       from: startDate?.format("DD.MM.YYYY"),
-                      to: endDate?.format("DD.MM.YYYY")
+                      to: endDate?.format("DD.MM.YYYY"),
                     };
                     this.changeRequest("departure", departure);
                   }}
                   focusedInput={this.state.departureSpanFocused}
-                  onFocusChange={focused =>
+                  onFocusChange={(focused) =>
                     this.setState({ departureSpanFocused: focused })
                   }
                   displayFormat="DD.MM.YYYY"
@@ -349,12 +343,12 @@ export class App extends React.Component<{}, AppState> {
                   id="departure"
                   date={this.dateToMoment(this.state.request?.departure?.from)}
                   focused={this.state.departureFocused}
-                  onFocusChange={focused =>
+                  onFocusChange={(focused) =>
                     this.setState({ departureFocused: focused.focused })
                   }
-                  onDateChange={date => {
+                  onDateChange={(date) => {
                     const departure: Timespan = {
-                      from: date?.format("DD.MM.YYYY")
+                      from: date?.format("DD.MM.YYYY"),
                     };
                     this.changeRequest("departure", departure);
                   }}
@@ -374,7 +368,7 @@ export class App extends React.Component<{}, AppState> {
                   type="checkbox"
                   onChange={(event: any) => {
                     this.setState({
-                      returnFlexible: event.indexOf("returnFlexible") > -1
+                      returnFlexible: event.indexOf("returnFlexible") > -1,
                     });
                   }}
                 >
@@ -401,14 +395,17 @@ export class App extends React.Component<{}, AppState> {
                     onDatesChange={({ startDate, endDate }) => {
                       const returnTime: Timespan = {
                         from: startDate?.format("DD.MM.YYYY"),
-                        to: endDate?.format("DD.MM.YYYY")
+                        to: endDate?.format("DD.MM.YYYY"),
                       };
                       this.changeRequest("return", returnTime);
                     }}
                     focusedInput={this.state.returnSpanFocused}
-                    onFocusChange={focused =>
-                      this.setState({ returnSpanFocused: focused })
-                    }
+                    onFocusChange={(focused) => {
+                      if (focused) {
+                        this.initReturnDate();
+                      }
+                      this.setState({ returnSpanFocused: focused });
+                    }}
                     displayFormat="DD.MM.YYYY"
                     noBorder={true}
                   ></DateRangePicker>
@@ -417,12 +414,15 @@ export class App extends React.Component<{}, AppState> {
                     id="return"
                     date={this.dateToMoment(this.state.request?.return?.from)}
                     focused={this.state.returnFocused}
-                    onFocusChange={focused =>
-                      this.setState({ returnFocused: focused.focused })
-                    }
-                    onDateChange={date => {
+                    onFocusChange={(focused) => {
+                      if (focused.focused) {
+                        this.initReturnDate();
+                      }
+                      this.setState({ returnFocused: focused.focused });
+                    }}
+                    onDateChange={(date) => {
                       const returnTime: Timespan = {
-                        from: date?.format("DD.MM.YYYY")
+                        from: date?.format("DD.MM.YYYY"),
                       };
                       this.changeRequest("return", returnTime);
                     }}
