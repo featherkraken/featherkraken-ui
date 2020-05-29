@@ -1,27 +1,27 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "c66ab5154172626f6c99ba8319154670",
+    "revision": "067b1f2fc30509882543b4d2adc6acd3",
     "url": "/featherkraken-ui/index.html"
   },
   {
-    "revision": "45cdfc1c18e3fbcc1023",
+    "revision": "4203968c34ec10853792",
     "url": "/featherkraken-ui/static/css/2.661b9127.chunk.css"
   },
   {
-    "revision": "2b642f105a9241d0f39b",
+    "revision": "6af5d8b50c5e095d5d27",
     "url": "/featherkraken-ui/static/css/main.08aca1d7.chunk.css"
   },
   {
-    "revision": "45cdfc1c18e3fbcc1023",
-    "url": "/featherkraken-ui/static/js/2.e9ad17b3.chunk.js"
+    "revision": "4203968c34ec10853792",
+    "url": "/featherkraken-ui/static/js/2.1d92899a.chunk.js"
   },
   {
     "revision": "54f6e2d0ef339619d0a432be7ac0ab75",
-    "url": "/featherkraken-ui/static/js/2.e9ad17b3.chunk.js.LICENSE"
+    "url": "/featherkraken-ui/static/js/2.1d92899a.chunk.js.LICENSE"
   },
   {
-    "revision": "2b642f105a9241d0f39b",
-    "url": "/featherkraken-ui/static/js/main.3e92585d.chunk.js"
+    "revision": "6af5d8b50c5e095d5d27",
+    "url": "/featherkraken-ui/static/js/main.02bca1db.chunk.js"
   },
   {
     "revision": "759d5554a979341ae1e3",
