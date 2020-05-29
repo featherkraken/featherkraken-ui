@@ -32,7 +32,7 @@ export function ResultTable(props: any) {
                 )}
                 <Col sm={1}>
                   <Row>
-                    <h2>{trip.price} €</h2>
+                    <h2>{trip.price}&nbsp;€</h2>
                   </Row>
                   <Row className="mt-3">
                     <a
