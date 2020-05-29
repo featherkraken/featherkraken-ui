@@ -24,3 +24,12 @@
 .DateInput_input__focused {
   border-bottom: 2px solid #4582ec;
 }
+
+/* border-width */
+.border-3 {
+  border-width: 3px !important;
+}
+
+.border-5 {
+  border-width: 5px !important;
+}

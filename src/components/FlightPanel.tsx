@@ -1,12 +1,9 @@
-import * as React from "react";
 import moment from "moment";
-import { Route } from "../objects/Route";
+import * as React from "react";
+import { Col, Container, Row } from "react-bootstrap";
+import { IoIosAirplane as Airplane, IoMdCalendar as Calendar } from "react-icons/io";
 import { Flight } from "../objects/Flight";
-import {
-  IoMdCalendar as Calendar,
-  IoIosAirplane as Airplane
-} from "react-icons/io";
-import { Container, Row, Col } from "react-bootstrap";
+import { Route } from "../objects/Route";
 
 export function FlightPanel(props: any) {
   if (props.flight) {
@@ -60,6 +57,7 @@ export function FlightPanel(props: any) {
                     </Col>
                     <Col sm={3}>
                       <img
+                        className="border rounded"
                         alt={`Airline ${route.airline}`}
                         src={`https://images.kiwi.com/airlines/64/${route.airline}.png`}
                       />

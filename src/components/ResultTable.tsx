@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { Trip } from "../objects/Trip";
 import { FlightPanel } from "./FlightPanel";
 
@@ -9,7 +9,10 @@ export function ResultTable(props: any) {
       <div>
         {props.trips.map((trip: Trip, index: number) => {
           return (
-            <Container className="mb-3 border-bottom" key={index}>
+            <Container
+              className="mb-3 border-bottom border-5"
+              key={index}
+            >
               <Row>
                 <Col>
                   <div className="mb-2">
@@ -29,7 +32,7 @@ export function ResultTable(props: any) {
                 )}
                 <Col sm={1}>
                   <Row>
-                    <h2>{trip.price} €</h2>
+                    <h2>{trip.price}&nbsp;€</h2>
                   </Row>
                   <Row className="mt-3">
                     <a
