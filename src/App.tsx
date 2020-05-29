@@ -1,7 +1,7 @@
 import axios from "axios";
 import moment from "moment";
 import * as React from "react";
-import { Button, Col, Dropdown, DropdownButton, Form, InputGroup, Navbar, ProgressBar, Row, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
+import { Button, ButtonGroup, Col, Dropdown, DropdownButton, Form, InputGroup, Navbar, ProgressBar, Row, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
 import { AsyncTypeahead, Menu, MenuItem } from "react-bootstrap-typeahead";
 import { DateRangePicker, SingleDatePicker } from "react-dates";
 import "react-dates/initialize";
@@ -98,20 +98,6 @@ export class App extends React.Component<{}, AppState> {
     return `${passengers} Passenger${passengers === 1 ? "" : "s"}`;
   }
 
-  getStopTitle(): string {
-    if (!this.state.request.stops) {
-      return "Filter stops";
-    }
-    const stops: number = +this.state.request.stops;
-    if (stops === 0) {
-      return "Non-stop";
-    }
-    if (stops === 1) {
-      return "1 Stop";
-    }
-    return `${stops} Stops`;
-  }
-
   dateToMoment(date: string | undefined): moment.Moment {
     return date ? moment(date, "DD.MM.YYYY") : moment(new Date());
   }
@@ -195,17 +181,43 @@ export class App extends React.Component<{}, AppState> {
             <DropdownButton
               variant="outline"
               id="stops"
-              title={this.getStopTitle()}
+              title="Filter stops"
               className="mr-1"
             >
-              <Form.Control
-                type="number"
-                min="0"
-                defaultValue="0"
-                onChange={(event: any) => {
-                  this.changeRequest("stops", event.target.value);
-                }}
-              />
+              <ButtonGroup className="ml-3" vertical>
+                <Form.Check
+                  type="radio"
+                  name="stops"
+                  label="Any"
+                  onChange={() => {
+                    this.changeRequest("stops", null);
+                  }}
+                />
+                <Form.Check
+                  type="radio"
+                  name="stops"
+                  label="Non-stop"
+                  onChange={() => {
+                    this.changeRequest("stops", 0);
+                  }}
+                />
+                <Form.Check
+                  type="radio"
+                  name="stops"
+                  label="Up to 1 stop"
+                  onChange={() => {
+                    this.changeRequest("stops", 1);
+                  }}
+                />
+                <Form.Check
+                  type="radio"
+                  name="stops"
+                  label="Up to 2 stops"
+                  onChange={() => {
+                    this.changeRequest("stops", 2);
+                  }}
+                />
+              </ButtonGroup>
             </DropdownButton>
             <DropdownButton
               variant="outline"
