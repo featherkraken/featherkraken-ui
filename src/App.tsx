@@ -14,6 +14,7 @@ import { ClassType } from "./objects/ClassType";
 import { SearchRequest } from "./objects/SearchRequest";
 import { SearchResult } from "./objects/SearchResult";
 import { Timespan } from "./objects/Timespan";
+import { Trip } from "./objects/Trip";
 import { TripType } from "./objects/TripType";
 
 const apiUrl: string = "http://localhost:8080/featherkraken/rest";
@@ -32,6 +33,9 @@ export interface AppState {
   returnFlexible: boolean;
   returnFocused: boolean | null;
   returnSpanFocused: "startDate" | "endDate" | null;
+  filteredTrips?: Trip[];
+  foundAirlines?: string[];
+  airlineFilter: Object;
 }
 
 let tripTypes: string[] = [];
@@ -57,6 +61,7 @@ export class App extends React.Component<{}, AppState> {
     returnFlexible: false,
     returnFocused: false,
     returnSpanFocused: null,
+    airlineFilter: {},
   };
 
   changeRequest(attr: string, value: any) {
@@ -70,8 +75,12 @@ export class App extends React.Component<{}, AppState> {
     axios
       .post(`${apiUrl}/flights`, this.state.request)
       .then((result) => {
-        this.setState({ result: result.data });
-        this.setState({ searching: false });
+        this.setState({
+          result: result.data,
+          searching: false,
+          filteredTrips: result.data.trips,
+        });
+        this.initAirlineFilter();
       })
       .catch((error) => {
         console.error(error);
@@ -109,6 +118,47 @@ export class App extends React.Component<{}, AppState> {
     if (departure.isAfter(returnDate)) {
       this.changeRequest("return", this.state.request.departure);
     }
+  }
+
+  initAirlineFilter() {
+    const trips = this.state.result?.trips;
+    if (!trips) {
+      return;
+    }
+    let airlines: string[] = [];
+    let airlineFilter = {};
+    trips.forEach((trip) => {
+      if (trip.airlines) {
+        trip.airlines.forEach((airline) => {
+          if (!airlines.includes(airline)) {
+            airlines.push(airline);
+            airlineFilter[airline] = true;
+          }
+        });
+      }
+    });
+    this.setState({ foundAirlines: airlines, airlineFilter: airlineFilter });
+  }
+
+  filterTrips() {
+    const trips: Trip[] | undefined = this.state.result?.trips;
+    const airlineFilter = this.state.airlineFilter;
+    if (!trips || !airlineFilter) {
+      return;
+    }
+    let filteredTrips: Trip[] = [];
+    trips.forEach((trip) => {
+      let keepTrip = true;
+      trip.airlines?.forEach((airline) => {
+        if (!airlineFilter[airline]) {
+          keepTrip = false;
+        }
+      });
+      if (keepTrip) {
+        filteredTrips.push(trip);
+      }
+    });
+    this.setState({ filteredTrips: filteredTrips });
   }
 
   render() {
@@ -457,27 +507,71 @@ export class App extends React.Component<{}, AppState> {
           ) : (
             ""
           )}
-          {this.state.result?.sourceAirports &&
-          this.state.result.sourceAirports.length > 1 ? (
-            <DropdownButton
-              variant="outline"
-              id="sourceAirports"
-              title="Found airports"
-              className="ml-3"
-            >
-              {this.state.result.sourceAirports?.map((airport, index) => {
-                return (
-                  <Dropdown.Item eventKey={airport.name} key={index}>
-                    {airport.displayName} {airport.name}
-                  </Dropdown.Item>
-                );
-              })}
-            </DropdownButton>
-          ) : (
-            ""
-          )}
+          <Row>
+            {this.state.result?.sourceAirports &&
+            this.state.result.sourceAirports.length > 1 ? (
+              <DropdownButton
+                variant="outline"
+                id="sourceAirports"
+                title="Found airports"
+                className="ml-3"
+              >
+                {this.state.result.sourceAirports?.map((airport, index) => {
+                  return (
+                    <Dropdown.Item eventKey={airport.name} key={index}>
+                      {airport.displayName} {airport.name}
+                    </Dropdown.Item>
+                  );
+                })}
+              </DropdownButton>
+            ) : (
+              ""
+            )}
+            {this.state.foundAirlines && this.state.foundAirlines.length > 1 ? (
+              <DropdownButton
+                variant="outline"
+                id="airlineFilter"
+                title="Filter airlines"
+                className="ml-3"
+              >
+                {this.state.foundAirlines.map((airline, index) => {
+                  return (
+                    <Row className="ml-1">
+                      <Col>
+                        <Form.Check
+                          id={`cb-${airline}`}
+                          key={index}
+                          type="checkbox"
+                          name={airline}
+                          label={airline}
+                          defaultChecked
+                          onChange={(event: any) => {
+                            let airlineFilter = this.state.airlineFilter;
+                            airlineFilter[event.target.name] =
+                              event.target.checked;
+                            this.setState({ airlineFilter: airlineFilter });
+                            this.filterTrips();
+                          }}
+                        />
+                      </Col>
+                      <Col>
+                        <img
+                          id={`img-${airline}`}
+                          alt={`Airline ${airline}`}
+                          src={`https://images.kiwi.com/airlines/64/${airline}.png`}
+                          height="20px"
+                        />
+                      </Col>
+                    </Row>
+                  );
+                })}
+              </DropdownButton>
+            ) : (
+              ""
+            )}
+          </Row>
         </Form>
-        <ResultTable trips={this.state.result?.trips} />
+        <ResultTable trips={this.state.filteredTrips} />
       </div>
     );
   }
