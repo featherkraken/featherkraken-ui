@@ -36,6 +36,7 @@ export interface AppState {
   filteredTrips?: Trip[];
   foundAirlines?: string[];
   airlineFilter: Object;
+  airportFilter: Object;
 }
 
 let tripTypes: string[] = [];
@@ -62,6 +63,7 @@ export class App extends React.Component<{}, AppState> {
     returnFocused: false,
     returnSpanFocused: null,
     airlineFilter: {},
+    airportFilter: {},
   };
 
   changeRequest(attr: string, value: any) {
@@ -80,7 +82,7 @@ export class App extends React.Component<{}, AppState> {
           searching: false,
           filteredTrips: result.data.trips,
         });
-        this.initAirlineFilter();
+        this.initTripFilters();
       })
       .catch((error) => {
         console.error(error);
@@ -120,29 +122,39 @@ export class App extends React.Component<{}, AppState> {
     }
   }
 
-  initAirlineFilter() {
+  initTripFilters() {
     const trips = this.state.result?.trips;
-    if (!trips) {
-      return;
+    if (trips) {
+      let airlines: string[] = [];
+      let airlineFilter = this.state.airlineFilter;
+      trips.forEach((trip) => {
+        if (trip.airlines) {
+          trip.airlines.forEach((airline) => {
+            if (!airlines.includes(airline)) {
+              airlines.push(airline);
+              airlineFilter[airline] = true;
+            }
+          });
+        }
+      });
+      this.setState({ foundAirlines: airlines, airlineFilter: airlineFilter });
     }
-    let airlines: string[] = [];
-    let airlineFilter = {};
-    trips.forEach((trip) => {
-      if (trip.airlines) {
-        trip.airlines.forEach((airline) => {
-          if (!airlines.includes(airline)) {
-            airlines.push(airline);
-            airlineFilter[airline] = true;
-          }
-        });
-      }
-    });
-    this.setState({ foundAirlines: airlines, airlineFilter: airlineFilter });
+    const sourceAirports = this.state.result?.sourceAirports;
+    if (sourceAirports) {
+      const airportFilter = this.state.airportFilter;
+      sourceAirports.forEach((airport) => {
+        if (airport.name) {
+          airportFilter[airport.name] = true;
+        }
+      });
+      this.setState({ airportFilter: airportFilter });
+    }
   }
 
   filterTrips() {
     const trips: Trip[] | undefined = this.state.result?.trips;
     const airlineFilter = this.state.airlineFilter;
+    const airportFilter = this.state.airportFilter;
     if (!trips || !airlineFilter) {
       return;
     }
@@ -154,6 +166,20 @@ export class App extends React.Component<{}, AppState> {
           keepTrip = false;
         }
       });
+      const outwardRoute = trip.outwardFlight?.route;
+      if (outwardRoute) {
+        const outwardAirport = outwardRoute[0].source?.name;
+        if (outwardAirport) {
+          keepTrip = keepTrip && airportFilter[outwardAirport];
+        }
+      }
+      const returnRoute = trip.returnFlight?.route;
+      if (returnRoute) {
+        const returnAirport = returnRoute[returnRoute.length - 1].target?.name;
+        if (returnAirport) {
+          keepTrip = keepTrip && airportFilter[returnAirport];
+        }
+      }
       if (keepTrip) {
         filteredTrips.push(trip);
       }
@@ -513,14 +539,26 @@ export class App extends React.Component<{}, AppState> {
               <DropdownButton
                 variant="outline"
                 id="sourceAirports"
-                title="Found airports"
+                title="Filter airports"
                 className="ml-3"
               >
                 {this.state.result.sourceAirports?.map((airport, index) => {
                   return (
-                    <Dropdown.Item eventKey={airport.name} key={index}>
-                      {airport.displayName} {airport.name}
-                    </Dropdown.Item>
+                    <Form.Check
+                      className="ml-3"
+                      id={`cb-${airport.name}`}
+                      key={index}
+                      type="checkbox"
+                      name={airport.name}
+                      label={`${airport.displayName} ${airport.name}`}
+                      defaultChecked
+                      onChange={(event: any) => {
+                        let airportFilter = this.state.airportFilter;
+                        airportFilter[event.target.name] = event.target.checked;
+                        this.setState({ airportFilter: airportFilter });
+                        this.filterTrips();
+                      }}
+                    />
                   );
                 })}
               </DropdownButton>
@@ -536,11 +574,9 @@ export class App extends React.Component<{}, AppState> {
               >
                 {this.state.foundAirlines.map((airline, index) => {
                   return (
-                    <Row className="ml-1">
+                    <Row className="ml-1" key={`row-${airline}`}>
                       <Col>
                         <Form.Check
-                          id={`cb-${airline}`}
-                          key={index}
                           type="checkbox"
                           name={airline}
                           label={airline}
@@ -556,7 +592,6 @@ export class App extends React.Component<{}, AppState> {
                       </Col>
                       <Col>
                         <img
-                          id={`img-${airline}`}
                           alt={`Airline ${airline}`}
                           src={`https://images.kiwi.com/airlines/64/${airline}.png`}
                           height="20px"
