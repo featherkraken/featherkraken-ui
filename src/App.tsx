@@ -126,7 +126,7 @@ export class App extends React.Component<{}, AppState> {
     const trips = this.state.result?.trips;
     if (trips) {
       let airlines: string[] = [];
-      let airlineFilter = this.state.airlineFilter;
+      let airlineFilter = {};
       trips.forEach((trip) => {
         if (trip.airlines) {
           trip.airlines.forEach((airline) => {
@@ -141,7 +141,7 @@ export class App extends React.Component<{}, AppState> {
     }
     const sourceAirports = this.state.result?.sourceAirports;
     if (sourceAirports) {
-      const airportFilter = this.state.airportFilter;
+      const airportFilter = {};
       sourceAirports.forEach((airport) => {
         if (airport.name) {
           airportFilter[airport.name] = true;
