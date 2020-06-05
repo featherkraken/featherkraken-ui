@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/featherkraken-ui/precache-manifest.42044adbc7b5970d723e1cc43df3d255.js"
+  "/featherkraken-ui/precache-manifest.e2682e346c31c551c7c8ee00173563d6.js"
 );
 
 self.addEventListener('message', (event) => {
