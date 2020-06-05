@@ -1,6 +1,6 @@
 import moment from "moment";
 import * as React from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import { Badge, Col, Container, Row } from "react-bootstrap";
 import { IoIosAirplane as Airplane, IoMdCalendar as Calendar } from "react-icons/io";
 import { Flight } from "../objects/Flight";
 import { Route } from "../objects/Route";
@@ -27,10 +27,17 @@ export function FlightPanel(props: any) {
                         : ""}
                     </div>
                   </Row>
-                  <Row className="mb-3">
+                  <Row className="mb-1">
                     <Col sm={1}>
                       <Airplane />
                     </Col>
+                    <Col>
+                      <Badge pill variant="light">
+                        {route.classType}
+                      </Badge>
+                    </Col>
+                  </Row>
+                  <Row className="mb-3">
                     <Col className="border rounded">
                       <div className="p-2">
                         <div>
