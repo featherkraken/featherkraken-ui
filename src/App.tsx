@@ -418,6 +418,7 @@ export class App extends React.Component<{}, AppState> {
               </ToggleButtonGroup>
               {this.state.departureFlexible ? (
                 <DateRangePicker
+                  firstDayOfWeek={1}
                   startDate={this.dateToMoment(
                     this.state.request?.departure?.from
                   )}
@@ -441,6 +442,7 @@ export class App extends React.Component<{}, AppState> {
               ) : (
                 <SingleDatePicker
                   id="departure"
+                  firstDayOfWeek={1}
                   date={this.dateToMoment(this.state.request?.departure?.from)}
                   focused={this.state.departureFocused}
                   onFocusChange={(focused) =>
@@ -486,6 +488,7 @@ export class App extends React.Component<{}, AppState> {
                 </ToggleButtonGroup>
                 {this.state.returnFlexible ? (
                   <DateRangePicker
+                    firstDayOfWeek={1}
                     startDate={this.dateToMoment(
                       this.state.request?.return?.from
                     )}
@@ -512,6 +515,7 @@ export class App extends React.Component<{}, AppState> {
                 ) : (
                   <SingleDatePicker
                     id="return"
+                    firstDayOfWeek={1}
                     date={this.dateToMoment(this.state.request?.return?.from)}
                     focused={this.state.returnFocused}
                     onFocusChange={(focused) => {
