@@ -253,6 +253,17 @@ export class App extends React.Component<{}, AppState> {
                   </Dropdown.Item>
                 );
               })}
+              <Dropdown.Divider />
+              <Form.Check
+                type="checkbox"
+                name="mixClasses"
+                label="Mix classes"
+                className="ml-1"
+                defaultChecked
+                onChange={(event: any) =>
+                  this.changeRequest("mixClasses", event.target.checked)
+                }
+              />
             </DropdownButton>
             <DropdownButton
               variant="outline"
@@ -265,6 +276,7 @@ export class App extends React.Component<{}, AppState> {
                   type="radio"
                   name="stops"
                   label="Any"
+                  defaultChecked
                   onChange={() => {
                     this.changeRequest("stops", null);
                   }}
