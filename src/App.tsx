@@ -17,7 +17,7 @@ import { Timespan } from "./objects/Timespan";
 import { Trip } from "./objects/Trip";
 import { TripType } from "./objects/TripType";
 
-const apiUrl: string = "http://localhost:8080/featherkraken/rest";
+const apiUrl = process.env.REACT_APP_API_URL;
 
 export interface AppState {
   request: SearchRequest;
