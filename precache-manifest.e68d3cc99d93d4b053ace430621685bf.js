@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "d1836d4ade5d890378c1f89890274f5c",
+    "revision": "6e0c513dc8b8fbeb1d0895af648f85af",
     "url": "/featherkraken-ui/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/featherkraken-ui/static/css/2.661b9127.chunk.css"
   },
   {
-    "revision": "44c93ae549b920ecc112",
+    "revision": "c33a676363941050f834",
     "url": "/featherkraken-ui/static/css/main.1c73b097.chunk.css"
   },
   {
@@ -20,8 +20,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/featherkraken-ui/static/js/2.ebccb426.chunk.js.LICENSE"
   },
   {
-    "revision": "44c93ae549b920ecc112",
-    "url": "/featherkraken-ui/static/js/main.6bab2c06.chunk.js"
+    "revision": "c33a676363941050f834",
+    "url": "/featherkraken-ui/static/js/main.8bb81618.chunk.js"
   },
   {
     "revision": "759d5554a979341ae1e3",
